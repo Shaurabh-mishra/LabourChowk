@@ -1,0 +1,20 @@
+# Build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+
+# User-specific files
+.vscode/
+*.user
+*.suo
+
+# Database files
+/Database/*.db
+/Database/*.db-journal
+
+# Environment variables
+.env
