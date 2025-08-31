@@ -6,6 +6,7 @@ using AutoMapper;
 using LabourChowk_webapi.DTOs;
 using LabourChowk_webapi.Models;
 using LabourChowk_webapi.Services;
+using LabourChowk_webapi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabourChowk_webapi.Controller
@@ -14,10 +15,10 @@ namespace LabourChowk_webapi.Controller
     [Route("api/[controller]")]
     public class WorkPosterController : ControllerBase
     {
-        private readonly WorkPosterService _workePosterService;
+        private readonly IWorkPosterService _workePosterService;
         private readonly IMapper _mapper;
 
-        public WorkPosterController(WorkPosterService workePosterService, IMapper mapper)
+        public WorkPosterController(IWorkPosterService workePosterService, IMapper mapper)
         {
             _workePosterService = workePosterService;
             _mapper = mapper;
@@ -33,7 +34,7 @@ namespace LabourChowk_webapi.Controller
             var workPostersDtos = _mapper.Map<IEnumerable<WorkPosterResponseDto>>(workPosters);
             return Ok(workPostersDtos);
         }
-        [HttpGet("{id}",Name="GetWorkPosterById")]
+        [HttpGet("{id}", Name = "GetWorkPosterById")]
         public async Task<ActionResult<WorkPosterResponseDto>> GetWorkPosterByIdAsync(int id)
         {
             var workPoster = await _workePosterService.GetWorkPosterByIdAsync(id);

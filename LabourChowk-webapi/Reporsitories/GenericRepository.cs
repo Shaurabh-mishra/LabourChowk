@@ -1,11 +1,12 @@
 using System.Linq.Expressions;
 using LabourChowk_webapi.Data;
+using LabourChowk_webapi.Reporsitories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabourChowk_webapi.Repositories
 {
     // Generic repository: reusable for any entity
-    public class GenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly LabourChowkContext _context;
         private readonly DbSet<T> _dbSet;
@@ -77,6 +78,11 @@ namespace LabourChowk_webapi.Repositories
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUniqueAsync(Expression<Func<T, bool>> predicate)
+        {
+            return !await _dbSet.AnyAsync(predicate);
         }
     }
 }

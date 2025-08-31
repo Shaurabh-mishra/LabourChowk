@@ -1,13 +1,15 @@
 using LabourChowk_webapi.Models;
+using LabourChowk_webapi.Reporsitories.Interfaces;
 using LabourChowk_webapi.Repositories;
+using LabourChowk_webapi.Services.Interfaces;
 
 namespace LabourChowk_webapi.Services
 {
-    public class JobService
+    public class JobService : IJobService
     {
-        private readonly GenericRepository<Job> _repository;
+        private readonly IGenericRepository<Job> _repository;
 
-        public JobService(GenericRepository<Job> repository)
+        public JobService(IGenericRepository<Job> repository)
         {
             _repository = repository;
         }

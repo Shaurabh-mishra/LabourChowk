@@ -1,13 +1,15 @@
 using LabourChowk_webapi.Models;
+using LabourChowk_webapi.Reporsitories.Interfaces;
 using LabourChowk_webapi.Repositories;
+using LabourChowk_webapi.Services.Interfaces;
 
 namespace LabourChowk_webapi.Services
 {
-    public class WorkerService
+    public class WorkerService : IWorkerService
     {
-        private readonly GenericRepository<Worker> _repository;
+        private readonly IGenericRepository<Worker> _repository;
 
-        public WorkerService(GenericRepository<Worker> repository)
+        public WorkerService(IGenericRepository<Worker> repository)
         {
             _repository = repository;
         }
@@ -15,6 +17,15 @@ namespace LabourChowk_webapi.Services
         public Task<List<Worker>> GetAllWorkersAsync() => _repository.GetAllAsync();
         public Task<Worker?> GetWorkerByIdAsync(int id) => _repository.GetByIdAsync(id);
         public Task<Worker> AddWorkerAsync(Worker worker) => _repository.AddAsync(worker);
+        public async Task<(Worker? worker, string? errorMessage)> AddWorkerWithValidationAsync(Worker worker)
+        {
+            bool isUnique = await _repository.IsUniqueAsync(w => w.Phone == worker.Phone);
+
+            if (!isUnique)
+                return (null, "Phone number is already in use.");
+            await _repository.AddAsync(worker);
+            return (worker, null);
+        }
 
         public async Task<bool> UpdateWorkerAsync(int id, Worker updatedWorker)
         {
@@ -37,7 +48,6 @@ namespace LabourChowk_webapi.Services
             await _repository.DeleteAsync(worker);
             return true;
         }
-
 
     }
 }

@@ -19,6 +19,11 @@ namespace LabourChowk_webapi.Data
 
             modelBuilder.Entity<Job>()
                 .HasKey(j => j.Id);
+
+            modelBuilder.Entity<Worker>()
+                .HasIndex(w => w.Phone).IsUnique();
+            modelBuilder.Entity<WorkPoster>()
+                .HasIndex(w => w.Phone).IsUnique();
         }
 
         public DbSet<Worker> Workers { get; set; }
