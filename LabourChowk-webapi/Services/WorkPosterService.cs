@@ -1,13 +1,15 @@
 using LabourChowk_webapi.Models;
+using LabourChowk_webapi.Reporsitories.Interfaces;
 using LabourChowk_webapi.Repositories;
+using LabourChowk_webapi.Services.Interfaces;
 
 namespace LabourChowk_webapi.Services
 {
-    public class WorkPosterService
+    public class WorkPosterService : IWorkPosterService
     {
-        private readonly GenericRepository<WorkPoster> _repository;
+        private readonly IGenericRepository<WorkPoster> _repository;
 
-        public WorkPosterService(GenericRepository<WorkPoster> repository)
+        public WorkPosterService(IGenericRepository<WorkPoster> repository)
         {
             _repository = repository;
         }

@@ -2,7 +2,9 @@ using LabourChowk_webapi.Data;
 using Microsoft.EntityFrameworkCore;
 using LabourChowk_webapi.Repositories;
 using LabourChowk_webapi.Services;
-using AutoMapper; // Add this for AutoMapper
+using AutoMapper;
+using LabourChowk_webapi.Services.Interfaces;
+using LabourChowk_webapi.Reporsitories.Interfaces; // Add this for AutoMapper
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,12 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); // ✅ enable controllers
 
 // Register repositories
-builder.Services.AddScoped(typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // Register services
-builder.Services.AddScoped<JobService>();
-builder.Services.AddScoped<WorkerService>();
-builder.Services.AddScoped<WorkPosterService>();
+builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IWorkerService, WorkerService>();
+builder.Services.AddScoped<IWorkPosterService, WorkPosterService>();
 //Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Program)); // ✅ register AutoMapper profiles
 

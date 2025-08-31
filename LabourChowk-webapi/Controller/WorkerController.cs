@@ -2,6 +2,7 @@ using AutoMapper;
 using LabourChowk_webapi.DTOs;
 using LabourChowk_webapi.Models;
 using LabourChowk_webapi.Services;
+using LabourChowk_webapi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabourChowk_webapi.Controllers
@@ -11,10 +12,10 @@ namespace LabourChowk_webapi.Controllers
     public class WorkerController : ControllerBase
     {
         //inject dependencies
-        private readonly WorkerService _workerService;
+        private readonly IWorkerService _workerService;
         private readonly IMapper _mapper;
 
-        public WorkerController(WorkerService workerService, IMapper mapper)
+        public WorkerController(IWorkerService workerService, IMapper mapper)
         {
             _workerService = workerService;
             _mapper = mapper;
@@ -37,7 +38,7 @@ namespace LabourChowk_webapi.Controllers
         public async Task<ActionResult<WorkerResponseDto>> GetWorkerByIdAsync(int id)
         {
             var worker = await _workerService.GetWorkerByIdAsync(id);
-            if (worker == null)
+            if (worker is null)
             {
                 return NotFound(); // returns 404 Not Found if worker not found
             }
@@ -61,6 +62,9 @@ namespace LabourChowk_webapi.Controllers
                 id = addedWorker.Id
             }, addedWorkerDto); // returns 201 Created with location
         }
+
+
+
         [HttpPut("{id}")]
         public async Task<ActionResult<WorkerResponseDto>> UpdateWorkerAsync(int id, [FromBody] WorkerResponseDto workerDto)
         {
@@ -94,6 +98,26 @@ namespace LabourChowk_webapi.Controllers
 
             await _workerService.DeleteWorkerAsync(id);
             return NoContent(); // returns 204 No Content on successful deletion
+        }
+
+        [HttpPost("validate")]
+        public async Task<ActionResult<WorkerResponseDto>> AddWorkerWithValidationAsync([FromBody] WorkerCreateDto workerDto)
+        {
+            if (workerDto == null)
+            {
+                return BadRequest("Worker data is null."); // returns 400 Bad Request if data is null
+            }
+
+            var worker = _mapper.Map<Worker>(workerDto);
+            (Worker? addedWorker, string? errorMessage) = await _workerService.AddWorkerWithValidationAsync(worker);
+
+            if (addedWorker == null)
+            {
+                return BadRequest(errorMessage); // returns 400 Bad Request with error message
+            }
+
+            var addedWorkerDto = _mapper.Map<WorkerResponseDto>(addedWorker);
+            return CreatedAtAction("GetWorkerById", new { id = addedWorker.Id }, addedWorkerDto); // returns 201 Created with location
         }
     }
 }

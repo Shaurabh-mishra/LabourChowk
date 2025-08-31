@@ -3,6 +3,7 @@ using LabourChowk_webapi.Models;
 using LabourChowk_webapi.Services;
 using AutoMapper;
 using LabourChowk_webapi.DTOs;
+using LabourChowk_webapi.Services.Interfaces;
 
 namespace LabourChowk_webapi.Controllers
 {
@@ -10,10 +11,10 @@ namespace LabourChowk_webapi.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-        private readonly JobService _jobService;
+        private readonly IJobService _jobService;
         private readonly IMapper _mapper;
 
-        public JobController(JobService jobService, IMapper mapper)
+        public JobController(IJobService jobService, IMapper mapper)
         {
             _jobService = jobService;
             _mapper = mapper;
@@ -38,7 +39,7 @@ namespace LabourChowk_webapi.Controllers
         public async Task<ActionResult<JobResponseDTO>> GetJob(int id)
         {
             var job = await _jobService.GetJobByIdAsync(id);
-            if (job == null) return NotFound($"Job with ID {id} not found.");
+            if (job is null) return NotFound($"Job with ID {id} not found.");
 
             // Map the job to JobResponseDTO
             var jobDto = _mapper.Map<JobResponseDTO>(job);
