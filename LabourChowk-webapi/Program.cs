@@ -11,6 +11,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using LabourChowk_webapi.Middleware;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +96,35 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Configure Serilog
+// Log.Logger = new LoggerConfiguration()
+// //.MinimumLevel.Error()
+//     .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day,
+//                   outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}")
+//     .CreateLogger();
+
+// builder.Host.UseSerilog();
+// Serilog configuration
+// try
+// {
+//     builder.Host.UseSerilog((context, services, configuration) =>
+//  {
+//      configuration
+//          .MinimumLevel.Debug()
+//          .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+//          .Enrich.FromLogContext()
+//          .WriteTo.Console() // Console logging
+//          .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day,
+//              outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}"); // File logging
+//  });
+// }
+// catch (Exception ex)
+// {
+//     Console.WriteLine("Error configuring Serilog: " + ex.Message);
+//     throw;
+// }
+
+
 var app = builder.Build();
 
 // Ensure DB exists and seed admin user
@@ -119,16 +151,17 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Middleware pipeline
-if (app.Environment.IsDevelopment())
+// if (app.Environment.IsDevelopment())
+// {
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LabourChowk API v1");
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "LabourChowk API v1");
+});
+//}
 
 app.UseHttpsRedirection();
+app.UseMiddleware<GlobalException>();
 
 app.UseAuthentication(); // Must come before UseAuthorization
 app.UseAuthorization();
