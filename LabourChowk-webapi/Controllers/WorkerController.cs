@@ -3,6 +3,7 @@ using LabourChowk_webapi.DTOs;
 using LabourChowk_webapi.Models;
 using LabourChowk_webapi.Services;
 using LabourChowk_webapi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabourChowk_webapi.Controllers
@@ -23,6 +24,7 @@ namespace LabourChowk_webapi.Controllers
 
         // Controller actions go here
         [HttpGet]
+        [Authorize(Roles = "WorkPoster,Admin")] // Only Workers and Admin can access this endpoint
         public async Task<ActionResult<IEnumerable<WorkerResponseDto>>> GetWorkersAsync()
         {
             // Logic to retrieve workers
@@ -100,7 +102,7 @@ namespace LabourChowk_webapi.Controllers
             return NoContent(); // returns 204 No Content on successful deletion
         }
 
-        [HttpPost("validate")]
+        [HttpPost("CreateValidated")]
         public async Task<ActionResult<WorkerResponseDto>> AddWorkerWithValidationAsync([FromBody] WorkerCreateDto workerDto)
         {
             if (workerDto == null)

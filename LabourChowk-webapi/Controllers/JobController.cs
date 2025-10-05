@@ -4,11 +4,13 @@ using LabourChowk_webapi.Services;
 using AutoMapper;
 using LabourChowk_webapi.DTOs;
 using LabourChowk_webapi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LabourChowk_webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "WorkPoster,admin")] // Only WorkPoster and Admin can manage jobs
     public class JobController : ControllerBase
     {
         private readonly IJobService _jobService;
@@ -88,6 +90,7 @@ namespace LabourChowk_webapi.Controllers
         }
 
         [HttpDelete("{id}")]
+
         public async Task<IActionResult> DeleteJob(int id)
         {
             var success = await _jobService.DeleteJobAsync(id);

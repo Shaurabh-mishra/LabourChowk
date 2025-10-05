@@ -24,10 +24,13 @@ namespace LabourChowk_webapi.Data
                 .HasIndex(w => w.Phone).IsUnique();
             modelBuilder.Entity<WorkPoster>()
                 .HasIndex(w => w.Phone).IsUnique();
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username).IsUnique();
         }
 
         public DbSet<Worker> Workers { get; set; }
         public DbSet<WorkPoster> WorkPosters { get; set; }
         public DbSet<Job> Jobs { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
